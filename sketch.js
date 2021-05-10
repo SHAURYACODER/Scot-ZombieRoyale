@@ -37,12 +37,10 @@ function setup(){
 
   engine = Engine.create();
   world = engine.world;
-  Engine.run(engine);
 
-  polygon = Bodies.circle(50,200,20);
-  World.add(world,polygon);
+  polygon = new Bird(200,50);
 
-  slingShot = new Slingshot(this.polygon,{x:100,y:200});
+  slingshot = new SlingShot(polygon.body,{x:200, y:50});
 
   database = firebase.database();
   game = new Game();
@@ -55,13 +53,16 @@ function draw(){
 
   background("green");
 
+  Engine.update(engine);
+
   if(playerCount === 2){
     game.update(1);
   }
   if(gameState === 1){
     clear();
 
-   image(polygon_img ,polygon.position.x,polygon.position.y,40,40);
+    polygon.display();
+    slingshot.display();
 
     game.play();
   }
@@ -71,15 +72,22 @@ function draw(){
 
 } 
 
-function mouseDragged(){
-  Matter.Body.setPosition(this.polygon,{x:mouseX,y:mouseY});
+/*function mouseDragged(){
+  //if (gameState!=="launched"){
+      Matter.Body.setPosition(polygon.body, {x: mouseX , y: mouseY});
+  //}
 }
+
+
 function mouseReleased(){
-  slingShot.fly();
-}
+  slingshot.fly();
+  gameState = "launched";
+}*/
 
 function keyPressed(){
   if(keyCode === 32){
-      slingShot.attach(this.polygon);
+      polygon.trajectory=[];
+      Matter.Body.setPosition(polygon.body,{x:200,y:50});
+     slingshot.attach(polygon.body);
   }
 }
